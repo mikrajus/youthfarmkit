@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouthFarm Kit</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Connection Status Indicator -->
+      <div id="connectionStatus" class="connection-status connecting">
+        <span class="status-dot"></span>
+        <span id="statusText">Menghubungkan...</span>
+      </div>
+
+      <header>
+        <div class="header-content">
+          <div class="logo-container">
+            <img
+              src="assets/logo.png"
+              alt="YouthFarm Logo"
+              class="logo-image"
+            />
+            <h1>YouthFarm Kit</h1>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <!-- Beranda -->
+        <section id="beranda" class="page active">
+          <div id="warningBox" class="warning-box">
+            <strong>⚠️ PERINGATAN!</strong>
+            <p id="warningText">Air di drum tinggal sedikit!</p>
+          </div>
+
+          <div class="welcome-card">
+            <h2>Hai, Farmer Muda!</h2>
+            <p>Selamat datang di YouthFarm Kit</p>
+          </div>
+
+          <!-- Tombol Tambah Proyek Baru -->
+          <button class="btn-add-project" onclick="showAddProjectModal()">
+            Mulai Tanam Kangkung Baru
+          </button>
+
+          <!-- Tombol Reset Preferensi (tersembunyi secara default) -->
+          <button
+            class="btn-reset-preference"
+            onclick="resetExperiencePreference()"
+            style="display: none"
+            id="btnResetPreference"
+          >
+            🔄 Reset Preferensi Pengalaman
+          </button>
+
+          <!-- Daftar Proyek Kangkung -->
+          <div class="info-card">
+            <h3>Proyek Tanam Kangkung Saya</h3>
+            <div id="projectList" class="project-list">
+              <p class="empty-state">
+                Belum ada proyek. Mulai tanam kangkung pertama kamu!
+              </p>
+            </div>
+          </div>
+
+          <!-- Info Fase Panen -->
+          <div class="info-card">
+            <h3>Fase Panen Kangkung</h3>
+            <div class="fase-container">
+              <div class="fase-item">
+                <span class="fase-icon">🌱</span>
+                <div class="fase-info">
+                  <h4>Hari 0-10: Perkecambahan</h4>
+                  <p>Persiapan bibit dan tumbuh daun muda</p>
+                </div>
+              </div>
+              <div class="fase-item">
+                <span class="fase-icon">🌿</span>
+                <div class="fase-info">
+                  <h4>Hari 11-20: Pembesaran</h4>
+                  <p>Pemupukan dan pembesaran tanaman</p>
+                </div>
+              </div>
+              <div class="fase-item">
+                <span class="fase-icon">🥬</span>
+                <div class="fase-info">
+                  <h4>Hari 21-30: Siap Panen</h4>
+                  <p>Monitoring dan persiapan panen</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Logbook Harian -->
+        <section id="logbook" class="page">
+          <div class="welcome-card">
+            <h2>📖 Logbook Harian</h2>
+            <p>Catat aktivitas perawatan kangkung kamu</p>
+          </div>
+
+          <!-- Form Tambah Aktivitas -->
+          <div class="logbook-form-card">
+            <h3>Tambah Aktivitas Baru</h3>
+            <form id="activityForm" onsubmit="addActivity(event)">
+              <div class="form-group">
+                <label for="activityDate">Tanggal</label>
+                <input type="date" id="activityDate" required />
+              </div>
+
+              <div class="form-group">
+                <label for="activityProject">Proyek Kangkung</label>
+                <select id="activityProject" required>
+                  <option value="">Pilih Proyek</option>
+                  <!-- Akan diisi otomatis dari Firebase -->
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="activityPhase">Fase Tanaman</label>
+                <select id="activityPhase" required>
+                  <option value="">Pilih Fase</option>
+                  <option value="Hari 0-1">Hari 0-1: Persiapan</option>
+                  <option value="Hari 2-4">Hari 2-4: Berkecambah</option>
+                  <option value="Hari 5-10">Hari 5-10: Daun Muda</option>
+                  <option value="Hari 11-20">Hari 11-20: Pembesaran</option>
+                  <option value="Hari 21-30">Hari 21-30: Siap Panen</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="activityType">Jenis Aktivitas</label>
+                <select id="activityType" required>
+                  <option value="">Pilih Aktivitas</option>
+                  <option value="💧 Penyiraman">💧 Penyiraman</option>
+                  <option value="🌱 Penanaman Benih">🌱 Penanaman Benih</option>
+                  <option value="✂️ Penjarangan">✂️ Penjarangan</option>
+                  <option value="🧪 Pemupukan">🧪 Pemupukan</option>
+                  <option value="🐛 Pengendalian Hama">
+                    🐛 Pengendalian Hama
+                  </option>
+                  <option value="📊 Monitoring">📊 Monitoring</option>
+                  <option value="✅ Panen">✅ Panen</option>
+                  <option value="📝 Lainnya">📝 Lainnya</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="activityNote">Catatan</label>
+                <textarea
+                  id="activityNote"
+                  rows="3"
+                  placeholder="Contoh: Menyiram dengan sprayer, tanah masih lembap"
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="btn-submit">Tambah Aktivitas</button>
+            </form>
+          </div>
+
+          <!-- Filter Proyek -->
+          <div class="filter-card">
+            <label for="filterProject">Filter berdasarkan Proyek:</label>
+            <select id="filterProject" onchange="filterActivities()">
+              <option value="">Semua Proyek</option>
+              <!-- Akan diisi otomatis dari Firebase -->
+            </select>
+          </div>
+
+          <!-- Daftar Aktivitas -->
+          <div class="info-card">
+            <h3>Riwayat Aktivitas</h3>
+            <div id="activityList" class="activity-list">
+              <p class="empty-state">
+                Belum ada aktivitas. Tambahkan aktivitas pertama kamu!
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Monitor -->
+        <section id="monitor" class="page">
+          <div id="warningBoxMonitor" class="warning-box">
+            <strong>⚠️ PERINGATAN!</strong>
+            <p id="warningTextMonitor">Air di drum tinggal sedikit!</p>
+          </div>
+
+          <h2 style="color: #2c5364; margin-bottom: 1.5rem">
+            Monitoring Tanaman
+          </h2>
+          <div class="monitor-grid">
+            <div class="monitor-card">
+              <div class="monitor-header">
+                <span class="monitor-icon">💧</span>
+                <h3>Kelembapan Tanah</h3>
+              </div>
+              <div class="monitor-value">
+                <span id="soilMoisture" class="big-value">--</span>
+              </div>
+              <div class="monitor-status" id="soilStatus">Menunggu data...</div>
+              <div class="monitor-bar">
+                <div class="monitor-bar-fill" id="soilBar"></div>
+              </div>
+            </div>
+            <div class="monitor-card">
+              <div class="monitor-header">
+                <span class="monitor-icon">🚰</span>
+                <h3>Level Air Drum</h3>
+              </div>
+              <div class="monitor-value">
+                <span id="waterLevel" class="big-value">--</span>
+                <span class="unit">%</span>
+              </div>
+              <div class="monitor-status" id="waterStatus">
+                Menunggu data...
+              </div>
+              <div class="monitor-bar">
+                <div class="monitor-bar-fill" id="waterBar"></div>
+              </div>
+            </div>
+          </div>
+          <div class="info-card">
+            <h3>Status Sistem</h3>
+            <div class="status-grid">
+              <div class="status-item">
+                <span class="status-label">Pompa Air</span>
+                <span class="status-value" id="pumpStatus">--</span>
+              </div>
+              <div class="status-item">
+                <span class="status-label">Jarak Sensor</span>
+                <span class="status-value" id="distance">--</span>
+              </div>
+            </div>
+            <div class="last-update">
+              Terakhir update: <span id="lastUpdate">--</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Edukasi -->
+        <section id="edukasi" class="page">
+          <h2 style="color: #2c5364; margin-bottom: 1.5rem">
+            Tutorial Penanaman Kangkung
+          </h2>
+          <div class="tutorial-list">
+            <div class="tutorial-card" onclick="showTutorial('hari0-1')">
+              <div class="tutorial-icon">🌱</div>
+              <div class="tutorial-info">
+                <h3>HARI 0-1:</h3>
+                <p>Persiapan bibit</p>
+              </div>
+            </div>
+            <div class="tutorial-card" onclick="showTutorial('hari2-4')">
+              <div class="tutorial-icon">🌿</div>
+              <div class="tutorial-info">
+                <h3>HARI 2-4:</h3>
+                <p>Benih berkecambah</p>
+              </div>
+            </div>
+            <div class="tutorial-card" onclick="showTutorial('hari5-10')">
+              <div class="tutorial-icon">🌱</div>
+              <div class="tutorial-info">
+                <h3>HARI 5-10:</h3>
+                <p>Tumbuh daun muda</p>
+              </div>
+            </div>
+            <div class="tutorial-card" onclick="showTutorial('hari11-20')">
+              <div class="tutorial-icon">🌿</div>
+              <div class="tutorial-info">
+                <h3>HARI 11-20:</h3>
+                <p>Pembesaran</p>
+              </div>
+            </div>
+            <div class="tutorial-card" onclick="showTutorial('hari21-30')">
+              <div class="tutorial-icon">🥬</div>
+              <div class="tutorial-info">
+                <h3>HARI 21-30:</h3>
+                <p>Siap panen</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tutorial Detail -->
+        <section id="tutorial-detail" class="page">
+          <button class="back-btn" onclick="showPage('edukasi')">
+            ← Kembali
+          </button>
+          <div id="tutorialContent"></div>
+        </section>
+      </main>
+
+      <nav class="sidebar">
+        <button
+          class="nav-item active"
+          onclick="showPage('beranda')"
+          aria-label="Beranda"
+        >
+          <img
+            src="assets/navbar/home.png"
+            alt="Beranda"
+            class="nav-icon-img"
+          />
+        </button>
+        <button
+          class="nav-item"
+          onclick="showPage('logbook')"
+          aria-label="Logbook"
+        >
+          <img
+            src="assets/navbar/logbook.png"
+            alt="Logbook"
+            class="nav-icon-img"
+          />
+        </button>
+        <button
+          class="nav-item"
+          onclick="showPage('monitor')"
+          aria-label="Monitor"
+        >
+          <img
+            src="assets/navbar/monitoring.png"
+            alt="Monitor"
+            class="nav-icon-img"
+          />
+        </button>
+        <button
+          class="nav-item"
+          onclick="showPage('edukasi')"
+          aria-label="Edukasi"
+        >
+          <img
+            src="assets/navbar/education.png"
+            alt="Edukasi"
+            class="nav-icon-img"
+          />
+        </button>
+      </nav>
+    </div>
+
+    <!-- Modal Konfirmasi Pengalaman -->
+    <div id="experienceModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>🌱 Pengalaman Menanam Kangkung</h3>
+        </div>
+        <div style="padding: 1.5rem">
+          <p
+            style="
+              color: #666;
+              line-height: 1.6;
+              margin-bottom: 1.5rem;
+              text-align: center;
+            "
+          >
+            Apakah kamu sudah pernah menanam kangkung sebelumnya?
+          </p>
+          <div class="experience-options">
+            <button class="btn-experience" onclick="handleExperience(true)">
+              <span
+                style="font-size: 2rem; display: block; margin-bottom: 0.5rem"
+                >✅</span
+              >
+              <strong>Sudah Pernah</strong>
+              <p style="font-size: 0.85rem; margin-top: 0.3rem; opacity: 0.8">
+                Langsung mulai proyek baru
+              </p>
+            </button>
+            <button class="btn-experience" onclick="handleExperience(false)">
+              <span
+                style="font-size: 2rem; display: block; margin-bottom: 0.5rem"
+                >📚</span
+              >
+              <strong>Belum Pernah</strong>
+              <p style="font-size: 0.85rem; margin-top: 0.3rem; opacity: 0.8">
+                Pelajari tutorial dulu
+              </p>
+            </button>
+          </div>
+          <div style="margin-top: 1rem; text-align: center">
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                cursor: pointer;
+              "
+            >
+              <input
+                type="checkbox"
+                id="rememberChoice"
+                style="cursor: pointer"
+              />
+              <span style="font-size: 0.85rem; color: #666"
+                >Ingat pilihan saya</span
+              >
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Tambah Proyek -->
+    <div id="addProjectModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>➕ Mulai Proyek Tanam Baru</h3>
+          <button class="modal-close" onclick="closeAddProjectModal()">
+            ✕
+          </button>
+        </div>
+        <form id="projectForm" onsubmit="addProject(event)">
+          <div class="form-group">
+            <label for="projectName">Nama Proyek</label>
+            <input
+              type="text"
+              id="projectName"
+              placeholder="Contoh: Kangkung Batch 1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="projectStartDate">Tanggal Mulai Tanam</label>
+            <input type="date" id="projectStartDate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="projectLocation">Lokasi Tanam</label>
+            <input
+              type="text"
+              id="projectLocation"
+              placeholder="Contoh: Halaman belakang"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="projectNote">Catatan (opsional)</label>
+            <textarea
+              id="projectNote"
+              rows="2"
+              placeholder="Catatan tambahan tentang proyek ini"
+            ></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn-cancel"
+              onclick="closeAddProjectModal()"
+            >
+              Batal
+            </button>
+            <button type="submit" class="btn-submit">🌱 Mulai Tanam</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
